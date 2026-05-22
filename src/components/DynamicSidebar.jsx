@@ -45,9 +45,7 @@ const roleMenus = {
     { to: '/patient/dashboard', label: 'Dashboard', icon: DashboardIcon },
     { to: '/patient/appointments', label: 'Appointments', icon: CalendarIcon },
     { to: '/patient/medical-records', label: 'Medical Records', icon: ReportIcon },
-    { to: '/patient/prescriptions', label: 'Prescriptions', icon: PharmacyIcon },
-    { to: '/patient/billing', label: 'Billing', icon: BillingIcon },
-    { to: '/patient/profile', label: 'Profile', icon: SettingsIcon }
+    { to: '/patient/prescriptions', label: 'Prescriptions', icon: PharmacyIcon }
   ]
 };
 

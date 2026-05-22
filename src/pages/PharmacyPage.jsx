@@ -4,6 +4,8 @@ import { SearchIcon, PlusIcon } from '../components/Icons.jsx';
 
 const PharmacyPage = () => {
   const { state, addMedicine, payBilling, searchQuery, setSearchQuery } = useHospital();
+  const user = state.user;
+  const isPatient = user?.role === 'Patient';
   const [query, setQuery] = useState('');
   const [showStock, setShowStock] = useState(true);
   
@@ -49,12 +51,14 @@ const PharmacyPage = () => {
       <div className="page-head page-head-actions">
         <div>
           <p className="eyebrow">Pharmacy & Billing</p>
-          <h1>Inventory and Revenue</h1>
-          <p className="page-subtitle">Track medication stock, billing status, and expense analytics in one control surface.</p>
+          <h1>{isPatient ? 'Medication Pricing' : 'Inventory and Revenue'}</h1>
+          <p className="page-subtitle">{isPatient ? 'Browse available hospital medications and unit prices.' : 'Track medication stock, billing status, and expense analytics in one control surface.'}</p>
         </div>
-        <button className="btn btn-primary" onClick={() => setShowAddForm(true)}>
-          <PlusIcon size={16} /> Add Medicine
-        </button>
+        {!isPatient && (
+          <button className="btn btn-primary" onClick={() => setShowAddForm(true)}>
+            <PlusIcon size={16} /> Add Medicine
+          </button>
+        )}
       </div>
 
       <div className="glass-card search-panel">
@@ -104,36 +108,38 @@ const PharmacyPage = () => {
           </div>
         </div>
 
-        <div className="glass-card analytics-card">
-          <h3>Billing Snapshot</h3>
-          <div className="billing-summary">
-            <div>
-              <span>Total Revenue</span>
-              <strong>₹{state.billing.reduce((sum, invoice) => sum + invoice.totalAmount, 0).toLocaleString()}</strong>
-            </div>
-            <div>
-              <span>Unpaid Invoices</span>
-              <strong>{state.billing.filter((invoice) => invoice.status !== 'Paid').length}</strong>
-            </div>
-          </div>
-          <div className="billing-list">
-            {state.billing.slice(0, 4).map((invoice) => (
-              <div key={invoice.id} className="billing-item" style={{ background: 'var(--bg-app)' }}>
-                <div>
-                  <strong>{invoice.id}</strong>
-                  <p style={{ margin: '4px 0 0 0', fontWeight: '600' }}>{invoice.patientName}</p>
-                </div>
-                <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'flex-end' }}>
-                  <span>₹{invoice.totalAmount.toFixed(2)}</span>
-                  <span className={`badge badge-${invoice.status === 'Paid' ? 'success' : invoice.status === 'Unpaid' ? 'danger' : 'warning'}`}>{invoice.status}</span>
-                </div>
-                {invoice.status !== 'Paid' && (
-                  <button className="btn btn-secondary" type="button" onClick={() => payBilling(invoice)} style={{ padding: '6px 12px', fontSize: '0.8rem' }}>Mark Paid</button>
-                )}
+        {!isPatient && (
+          <div className="glass-card analytics-card">
+            <h3>Billing Snapshot</h3>
+            <div className="billing-summary">
+              <div>
+                <span>Total Revenue</span>
+                <strong>₹{state.billing.reduce((sum, invoice) => sum + invoice.totalAmount, 0).toLocaleString()}</strong>
               </div>
-            ))}
+              <div>
+                <span>Unpaid Invoices</span>
+                <strong>{state.billing.filter((invoice) => invoice.status !== 'Paid').length}</strong>
+              </div>
+            </div>
+            <div className="billing-list">
+              {state.billing.slice(0, 4).map((invoice) => (
+                <div key={invoice.id} className="billing-item" style={{ background: 'var(--bg-app)' }}>
+                  <div>
+                    <strong>{invoice.id}</strong>
+                    <p style={{ margin: '4px 0 0 0', fontWeight: '600' }}>{invoice.patientName}</p>
+                  </div>
+                  <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'flex-end' }}>
+                    <span>₹{invoice.totalAmount.toFixed(2)}</span>
+                    <span className={`badge badge-${invoice.status === 'Paid' ? 'success' : invoice.status === 'Unpaid' ? 'danger' : 'warning'}`}>{invoice.status}</span>
+                  </div>
+                  {invoice.status !== 'Paid' && (
+                    <button className="btn btn-secondary" type="button" onClick={() => payBilling(invoice)} style={{ padding: '6px 12px', fontSize: '0.8rem' }}>Mark Paid</button>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {showAddForm && (

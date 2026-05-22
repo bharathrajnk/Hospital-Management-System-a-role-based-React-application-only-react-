@@ -6,6 +6,8 @@ const TIMESLOTS = ['08:00 AM', '09:30 AM', '11:00 AM', '01:30 PM', '03:00 PM', '
 
 const AppointmentsPage = () => {
   const { state, bookAppointment, approveAppointment, searchQuery } = useHospital();
+  const user = state.user;
+  const isPatient = user?.role === 'Patient';
   
   // Form and Calendar states
   const [selectedDoctor, setSelectedDoctor] = useState(state.doctors[0]?.id || '');
@@ -17,7 +19,11 @@ const AppointmentsPage = () => {
   const [calendarDateFilter, setCalendarDateFilter] = useState('all');
 
   const upcoming = useMemo(() => {
-    return state.appointments.filter((appointment) => {
+    let baseApps = state.appointments;
+    if (isPatient && user?.name) {
+      baseApps = state.appointments.filter(a => a.patientName.toLowerCase() === user.name.toLowerCase());
+    }
+    return baseApps.filter((appointment) => {
       if (appointment.status === 'Cancelled') return false;
       if (!searchQuery) return true;
       return (
@@ -26,7 +32,7 @@ const AppointmentsPage = () => {
         appointment.type.toLowerCase().includes(searchQuery.toLowerCase())
       );
     });
-  }, [state.appointments, searchQuery]);
+  }, [state.appointments, searchQuery, isPatient, user?.name]);
 
   // Unique list of dates in appointments for visual calendar filter
   const calendarDates = useMemo(() => {
@@ -36,7 +42,12 @@ const AppointmentsPage = () => {
 
   const handleBook = (event) => {
     event.preventDefault();
-    const patient = state.patients.find((row) => row.id === selectedPatient);
+    let patient;
+    if (isPatient) {
+      patient = state.patients.find((row) => row.name.toLowerCase() === user.name.toLowerCase());
+    } else {
+      patient = state.patients.find((row) => row.id === selectedPatient);
+    }
     const doctor = state.doctors.find((row) => row.id === selectedDoctor);
     if (!patient || !doctor) return;
 
@@ -72,9 +83,13 @@ const AppointmentsPage = () => {
           <div className="form-row">
             <div className="form-group">
               <label className="form-label">Patient</label>
-              <select className="form-input" value={selectedPatient} onChange={(event) => setSelectedPatient(event.target.value)}>
-                {state.patients.map((patient) => <option key={patient.id} value={patient.id}>{patient.name}</option>)}
-              </select>
+              {isPatient ? (
+                <input className="form-input" value={user?.name || ''} disabled />
+              ) : (
+                <select className="form-input" value={selectedPatient} onChange={(event) => setSelectedPatient(event.target.value)}>
+                  {state.patients.map((patient) => <option key={patient.id} value={patient.id}>{patient.name}</option>)}
+                </select>
+              )}
             </div>
             <div className="form-group">
               <label className="form-label">Doctor</label>
@@ -120,7 +135,7 @@ const AppointmentsPage = () => {
                     <span className={`badge badge-${appointment.status === 'Approved' ? 'success' : appointment.status === 'Pending' ? 'warning' : 'secondary'}`} style={{ alignSelf: 'flex-end' }}>
                       {appointment.status}
                     </span>
-                    {appointment.status === 'Pending' && (
+                    {appointment.status === 'Pending' && !isPatient && (
                       <button className="btn btn-secondary" type="button" onClick={() => approveAppointment(appointment.id)} style={{ padding: '4px 8px', fontSize: '0.75rem', marginTop: '4px' }}>Approve</button>
                     )}
                   </div>

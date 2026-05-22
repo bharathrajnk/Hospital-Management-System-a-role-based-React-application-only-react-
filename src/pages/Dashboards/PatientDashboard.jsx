@@ -290,41 +290,7 @@ const PatientDashboard = () => {
             </div>
           </article>
 
-          {/* Invoices & Billing Card - CLICKABLE */}
-          <article className="glass-card widget-card patient-interactive-card" onClick={() => setActiveModal('billing')}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-              <h3 style={{ margin: 0 }}>Invoices & Billing</h3>
-              <span style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: '600' }}>View Ledger &rarr;</span>
-            </div>
-            <div style={{ display: 'grid', gap: '8px' }}>
-              {invoices.length === 0 ? (
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textAlign: 'center', padding: '16px 0', margin: 0 }}>No bills issued for your account.</p>
-              ) : (
-                invoices.slice(0, 3).map(inv => (
-                  <div key={inv.id} style={{ background: 'var(--bg-app)', padding: '12px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} onClick={(e) => e.stopPropagation()}>
-                    <div>
-                      <strong>{inv.id}</strong>
-                      <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>Date: {inv.date} | ₹{inv.totalAmount.toLocaleString('en-IN')}</div>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <span className={`badge badge-${inv.status === 'Paid' ? 'success' : 'danger'}`} style={{ fontSize: '0.65rem' }}>
-                        {inv.status}
-                      </span>
-                      {inv.status !== 'Paid' && (
-                        <button 
-                          className="btn btn-primary btn-sm" 
-                          onClick={() => setPayingInvoice(inv)}
-                          style={{ padding: '4px 8px', fontSize: '0.7rem' }}
-                        >
-                          Pay
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </article>
+          {/* Invoices & Billing Card removed per access settings */}
         </div>
 
         {/* Right column: Prescriptions & Medical History */}

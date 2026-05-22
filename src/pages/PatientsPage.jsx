@@ -25,12 +25,16 @@ const PatientsPage = () => {
 
   const filteredPatients = useMemo(() => {
     const q = searchQuery || search;
-    return state.patients.filter((patient) => 
+    let basePatients = state.patients;
+    if (state.user?.role === 'Patient' && state.user?.name) {
+      basePatients = state.patients.filter(p => p.name.toLowerCase() === state.user.name.toLowerCase());
+    }
+    return basePatients.filter((patient) => 
       patient.name.toLowerCase().includes(q.toLowerCase()) || 
       patient.condition.toLowerCase().includes(q.toLowerCase()) ||
       patient.room.toLowerCase().includes(q.toLowerCase())
     );
-  }, [state.patients, search, searchQuery]);
+  }, [state.patients, search, searchQuery, state.user]);
 
   const records = useMemo(() => {
     return filteredPatients.slice(0, limit);
@@ -126,9 +130,11 @@ const PatientsPage = () => {
           <h1>Patient Records</h1>
           <p className="page-subtitle">Search, update, and track patient admissions with one unified workflow.</p>
         </div>
-        <button className="btn btn-primary" onClick={openNew}>
-          <PlusIcon size={16} /> Add Patient
-        </button>
+        {state.user?.role !== 'Patient' && (
+          <button className="btn btn-primary" onClick={openNew}>
+            <PlusIcon size={16} /> Add Patient
+          </button>
+        )}
       </div>
 
       <div className="glass-card search-panel">
@@ -179,13 +185,17 @@ const PatientsPage = () => {
                   >
                     Clinical Chart &rarr;
                   </button>
-                  <button className="icon-button" type="button" onClick={() => { setEditPatient(patient); setFormState(patient); setShowForm(true); }}>
-                    <EditIcon size={18} />
-                  </button>
-                  <button className="icon-button danger" type="button" onClick={() => removePatient(patient.id)}>
-                    <TrashIcon size={18} />
-                  </button>
-                  <button className="btn btn-secondary" type="button" onClick={() => dischargePatient(patient.id)}>Discharge</button>
+                  {state.user?.role !== 'Patient' && (
+                    <>
+                      <button className="icon-button" type="button" onClick={() => { setEditPatient(patient); setFormState(patient); setShowForm(true); }}>
+                        <EditIcon size={18} />
+                      </button>
+                      <button className="icon-button danger" type="button" onClick={() => removePatient(patient.id)}>
+                        <TrashIcon size={18} />
+                      </button>
+                      <button className="btn btn-secondary" type="button" onClick={() => dischargePatient(patient.id)}>Discharge</button>
+                    </>
+                  )}
                 </td>
               </tr>
             ))}
