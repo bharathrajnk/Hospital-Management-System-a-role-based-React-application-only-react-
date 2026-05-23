@@ -1,13 +1,28 @@
-TO RUN LOCALLY
+## Run Locally
+
+### Clone the project
+
+```bash
 git clone https://github.com/bharathrajnk/Hospital-Management-System-a-role-based-React-application-only-react-.git
-Go to the project directory
+```
+
+### Go to the project directory
+
+```bash
 cd Hospital-Management-System-a-role-based-React-application-only-react-
-Install dependencies
+```
+
+### Install dependencies
+
+```bash
 npm install
-Start the Development Server
+```
+
+### Start the server
+
+```bash
 npm run dev
-Preview the Production Build
-npm run preview
+```
 <img width="1556" height="863" alt="Screenshot 2026-05-23 094928" src="https://github.com/user-attachments/assets/06b83446-cab8-478d-97ad-0d035b15f88b" />
 <img width="1919" height="861" alt="Screenshot 2026-05-23 094918" src="https://github.com/user-attachments/assets/d14546d8-9ed7-4ade-8220-80e29a56b4aa" />
 <img width="1916" height="866" alt="Screenshot 2026-05-23 094827" src="https://github.com/user-attachments/assets/86432cfa-c18e-4b58-875c-d94388585369" />
